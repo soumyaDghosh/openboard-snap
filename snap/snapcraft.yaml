@@ -1,0 +1,109 @@
+name: openboard
+version: 1.7.2
+summary: Interactive whiteboard for schools and universities
+description: |
+  OpenBoard is an open source cross-platform teaching software for interactive whiteboard designed primarily for use in schools and universities. It can be used both with interactive whiteboards or in a dual-screen setup with a pen-tablet display and a beamer.
+base: core22
+contact: soumyadeepghosh2004@zohomail.in
+issues: https://github.com/OpenBoard-org/OpenBoard/issues
+source-code: https://github.com/OpenBoard-org/OpenBoard
+website: https://openboard.ch/index.en.html
+compression: lzo
+grade: stable
+confinement: strict
+license: GPL-3.0-only
+
+parts:
+  quazip:
+    source: https://github.com/stachenov/quazip/archive/refs/tags/v1.4.tar.gz
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    prime:
+      - -usr/include
+
+  poppler:
+    plugin: cmake
+    source: https://poppler.freedesktop.org/poppler-24.12.0.tar.xz
+    build-packages:
+      - libfreetype-dev
+      - libfontconfig-dev
+      - libnss3-dev
+      - libopenjp2-7-dev
+      - liblcms2-dev
+      - libgpgmepp-dev
+      - libtiff-dev
+      - libcurlpp-dev
+      - libssl-dev
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DENABLE_UNSTABLE_API_ABI_HEADERS=ON
+      - -DENABLE_CPP=ON
+      - -DENABLE_QT5=OFF
+      - -DENABLE_QT6=OFF
+      - -DENABLE_GLIB=OFF
+      - -DBUILD_GTK_TESTS=OFF
+      - -DENABLE_GTK_DOC=OFF
+      - -DENABLE_BOOST=OFF
+      - -DENABLE_GPGME=OFF
+    override-stage: |
+      craftctl default
+      sed -i 's|=/usr|=${CRAFT_STAGE}/usr|g' ${CRAFT_STAGE}/usr/lib/*/pkgconfig/poppler*.pc
+    prime:
+      - -usr/include
+
+  openboard:
+    after:
+      - poppler
+      - quazip
+    plugin: cmake
+    source: https://github.com/OpenBoard-org/OpenBoard/archive/refs/tags/v${SNAPCRAFT_PROJECT_VERSION}.tar.gz
+    cmake-parameters:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_CXX_STANDARD=20
+    build-snaps:
+      - ffmpeg-2204-sdk
+    build-packages:
+      - libpulse0
+    build-environment:
+      - PKG_CONFIG_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+      - LD_LIBRARY_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR$ {LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - PATH: /snap/ffmpeg-2204-sdk/current/usr/bin${PATH:+:$PATH}
+
+  deps:
+    after: [ openboard ]
+    plugin: nil
+    stage-packages:
+      - onboard
+      - libcurl4
+    override-prime: |
+      craftctl default
+      for snap in "core22" "kf6-core22" "ffmpeg-2204"; do
+          cd "/snap/$snap/current" && find . -type f,l -exec rm -rf "$CRAFT_PRIME/{}" \;
+      done
+
+
+plugs:
+  ffmpeg-2204:
+    interface: content
+    target: ffmpeg-platform
+    default-provider: ffmpeg-2204
+  shmem:
+    interface: shared-memory
+    private: true
+
+apps:
+  openboard:
+    command: usr/bin/openboard
+    desktop: usr/share/applications/ch.openboard.OpenBoard.desktop
+    common-id: ch.openboard.OpenBoard
+    plugs:
+      - home
+      - removable-media
+    environment:
+      LD_LIBRARY_PATH: $SNAP/ffmpeg-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
+      PATH: $SNAP/ffmpeg-platform/usr/bin:$PATH
+    extensions: [ kde-neon-6 ]
