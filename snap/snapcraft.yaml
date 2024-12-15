@@ -93,7 +93,8 @@ parts:
       for snap in "core22" "kf6-core22" "ffmpeg-2204"; do
           cd "/snap/$snap/current" && find . -type f,l -exec rm -rf "$CRAFT_PRIME/{}" \;
       done
-      find ${CRAFT_PRIME} -type d -empty -exec rmdir {} \;
+      find -L "$CRAFT_PRIME" -type l -exec rm -f "{}" \;
+      find "$CRAFT_PRIME" -type d -empty -delete
     prime:
       - -usr/share/icons/Adwaita
       - -usr/share/icons/default
