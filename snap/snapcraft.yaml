@@ -4,6 +4,7 @@ summary: Interactive whiteboard for schools and universities
 description: |
   OpenBoard is an open source cross-platform teaching software for interactive whiteboard designed primarily for use in schools and universities. It can be used both with interactive whiteboards or in a dual-screen setup with a pen-tablet display and a beamer.
 base: core22
+title: OpenBoard
 contact: soumyadeepghosh2004@zohomail.in
 issues: https://github.com/OpenBoard-org/OpenBoard/issues
 source-code: https://github.com/OpenBoard-org/OpenBoard
