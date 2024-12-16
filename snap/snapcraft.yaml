@@ -78,7 +78,7 @@ parts:
       - PKG_CONFIG_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
       - LD_LIBRARY_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR$ {LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       - PATH: /snap/ffmpeg-2204-sdk/current/usr/bin${PATH:+:$PATH}
-    override-prime: |
+    override-build: |
       craftctl default
       sed -i 's|Icon=ch.openboard.OpenBoard|Icon=usr/share/icons/hicolor/scalable/apps/ch.openboard.OpenBoard.svg|g' ${CRAFT_PART_INSTALL}/usr/share/applications/ch.openboard.OpenBoard.desktop
 
@@ -102,6 +102,8 @@ parts:
       - -usr/share/icons/L*
       - -usr/share/icons/u*
       - -usr/share/doc*
+      - -usr/lib/*/libwayland*
+      - -usr/lib/*/liblcms*
       - -usr/include
 
 
