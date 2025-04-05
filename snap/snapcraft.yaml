@@ -3,7 +3,7 @@ version: 1.7.3
 summary: Interactive whiteboard for schools and universities
 description: |
   OpenBoard is an open source cross-platform teaching software for interactive whiteboard designed primarily for use in schools and universities. It can be used both with interactive whiteboards or in a dual-screen setup with a pen-tablet display and a beamer.
-base: core22
+base: core24
 title: OpenBoard
 contact: soumyadeepghosh2004@zohomail.in
 issues: https://github.com/OpenBoard-org/OpenBoard/issues
@@ -14,8 +14,8 @@ grade: stable
 confinement: strict
 license: GPL-3.0-only
 
-architectures:
-  - build-on: amd64
+platforms:
+  amd64:
 
 parts:
   quazip:
@@ -71,13 +71,14 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_CXX_STANDARD=20
     build-snaps:
-      - ffmpeg-2204-sdk
+      - ffmpeg-2404-sdk
     build-packages:
       - libpulse0
+      - libproxy1v5
     build-environment:
-      - PKG_CONFIG_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
-      - LD_LIBRARY_PATH: /snap/ffmpeg-2204-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR$ {LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-      - PATH: /snap/ffmpeg-2204-sdk/current/usr/bin${PATH:+:$PATH}
+      - PKG_CONFIG_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
+      - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR$ {LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
     override-build: |
       craftctl default
       sed -i 's|Icon=ch.openboard.OpenBoard|Icon=usr/share/icons/hicolor/scalable/apps/ch.openboard.OpenBoard.svg|g' ${CRAFT_PART_INSTALL}/usr/share/applications/ch.openboard.OpenBoard.desktop
@@ -90,7 +91,7 @@ parts:
       - libcurl4
     override-prime: |
       craftctl default
-      for snap in "core22" "kf6-core22" "ffmpeg-2204"; do
+      for snap in "core24" "kf6-core24" "ffmpeg-2404"; do
           cd "/snap/$snap/current" && find . -type f,l -exec rm -rf "$CRAFT_PRIME/{}" \;
       done
       find -L "$CRAFT_PRIME" -type l -exec rm -f "{}" \;
@@ -108,10 +109,10 @@ parts:
 
 
 plugs:
-  ffmpeg-2204:
+  ffmpeg-2404:
     interface: content
     target: ffmpeg-platform
-    default-provider: ffmpeg-2204
+    default-provider: ffmpeg-2404
   shmem:
     interface: shared-memory
     private: true
