@@ -125,6 +125,7 @@ apps:
     plugs:
       - home
       - removable-media
+      - userns
     environment:
       LD_LIBRARY_PATH: $SNAP/ffmpeg-platform/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR:$LD_LIBRARY_PATH
       PATH: $SNAP/ffmpeg-platform/usr/bin:$PATH
