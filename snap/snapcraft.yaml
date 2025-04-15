@@ -24,6 +24,7 @@ parts:
     cmake-parameters:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DQUAZIP_QT_MAJOR_VERSION=6
     prime:
       - -usr/lib/*/pkgconfig
       - -usr/include
