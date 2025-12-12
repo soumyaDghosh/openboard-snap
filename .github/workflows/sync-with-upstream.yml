@@ -22,6 +22,6 @@ jobs:
         with:
           token: ${{ secrets.SNAPCRAFTERS_BOT_COMMIT }}
           update-script: |
-            VERSION=$(git -c 'versionsort.suffix=-' ls-remote --tags --sort='v:refname' --heads https://github.com/OpenBoard-org/OpenBoard.git | tail --lines=1 | cut --delimiter='/' --fields=3,4 | cut -c 2-)
+            VERSION=$(git ls-remote --tags https://github.com/OpenBoard-org/OpenBoard.git 'v*.*.*' | grep -v '{}' | cut -f2 | sed -E 's|.*/v?||' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)
             sed -i 's/^\(version: \).*$/\1'"$VERSION"'/' snap/snapcraft.yaml
 

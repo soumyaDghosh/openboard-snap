@@ -31,8 +31,11 @@ parts:
 
   poppler:
     plugin: cmake
-    source: https://poppler.freedesktop.org/poppler-24.12.0.tar.xz
+    source: https://gitlab.freedesktop.org/poppler/poppler.git
+    source-tag: "poppler-25.12.0"
+    source-depth: 1
     build-packages:
+      - clang-format
       - libfreetype-dev
       - libfontconfig-dev
       - libnss3-dev
@@ -54,6 +57,8 @@ parts:
       - -DENABLE_GTK_DOC=OFF
       - -DENABLE_BOOST=OFF
       - -DENABLE_GPGME=OFF
+      - -DCMAKE_CXX_FLAGS="-I/usr/include/nss -I/usr/include/nspr"
+      - -DCMAKE_C_FLAGS="-I/usr/include/nss -I/usr/include/nspr"
     override-stage: |
       craftctl default
       sed -i 's|=/usr|=${CRAFT_STAGE}/usr|g' ${CRAFT_STAGE}/usr/lib/*/pkgconfig/poppler*.pc
@@ -79,7 +84,7 @@ parts:
       - libproxy1v5
     build-environment:
       - PKG_CONFIG_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}
-      - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR$ {LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+      - LD_LIBRARY_PATH: /snap/ffmpeg-2404-sdk/current/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
       - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
     override-build: |
       craftctl default
