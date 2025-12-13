@@ -26,6 +26,7 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DQUAZIP_QT_MAJOR_VERSION=6
     prime:
+      - -usr/lib/*/cmake
       - -usr/lib/*/pkgconfig
       - -usr/include
 
@@ -63,6 +64,7 @@ parts:
       craftctl default
       sed -i 's|=/usr|=${CRAFT_STAGE}/usr|g' ${CRAFT_STAGE}/usr/lib/*/pkgconfig/poppler*.pc
     prime:
+      - -usr/bin
       - -usr/lib/*/pkgconfig
       - -usr/include
 
@@ -77,7 +79,10 @@ parts:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DQT_VERSION=6
       - -DCMAKE_CXX_STANDARD=20
+      - -DCMAKE_CXX_FLAGS="-I/root/stage/usr/include"
+      - -DCMAKE_C_FLAGS="-I/root/stage/usr/include"
     build-snaps:
+      - cmake
       - ffmpeg-2404-sdk
     build-packages:
       - libpulse0
@@ -88,7 +93,7 @@ parts:
       - PATH: /snap/ffmpeg-2404-sdk/current/usr/bin${PATH:+:$PATH}
     override-pull: |
       craftctl default
-      patch -p1 $CRAFT_PROJECT_DIR/patches/openboard-support-poppler-25.12.patch
+      patch -p1 < $CRAFT_PROJECT_DIR/patches/openboard-support-poppler-25.12.patch
     override-build: |
       craftctl default
       sed -i 's|Icon=ch.openboard.OpenBoard|Icon=usr/share/icons/hicolor/scalable/apps/ch.openboard.OpenBoard.svg|g' ${CRAFT_PART_INSTALL}/usr/share/applications/ch.openboard.OpenBoard.desktop
